@@ -6,6 +6,7 @@ import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -13,9 +14,9 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.util.FPSCounter;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.bitmap.BitmapTexture;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import java.util.ArrayList;
 
 import windness.android.argrio.managers.ResourceManager;
 import windness.android.argrio.managers.SceneManager;
@@ -40,22 +41,32 @@ public class MainActivity extends BaseGameActivity {
 
     private Scene mScene;
 
-    public Circle circle;
+//    public Circle circle;
+    public ControlledCircle controlledCircle;
+//    public Sprite point;
+//    public Circle testPoint;
+    public ArrayList<Circle> points = new ArrayList<Circle>();
 
     //resources
-
-    private BitmapTexture circleTexture;
-    private TextureRegion circleRegion;
-
 
     @Override
     public EngineOptions onCreateEngineOptions() {
         mCamera = new Camera(0, 0, WIDTH, HEIGHT) {
 
-            private int mPipeSpawnCounter;
+            private int timer = 0;
 
             @Override
             public void onUpdate(float pSecondsElapsed) {
+                timer++;
+                if (timer >= 50) {
+                    timer = 0;
+                    float w = (float)(Math.random() * WIDTH);
+                    float h = (float)(Math.random() * HEIGHT);
+                    float weight = (float)(Math.random() * 10);
+                    Circle point = new Circle(w, h, weight);
+                    mScene.attachChild(point.getSprite());
+                    points.add(point);
+                }
             }
 
             private void ready() {
@@ -104,8 +115,11 @@ public class MainActivity extends BaseGameActivity {
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-        circle = new Circle();
-        mScene.attachChild(circle.getSprite());
+//        circle = new Circle(20);
+        controlledCircle = new ControlledCircle();
+
+//        mScene.attachChild(circle.getSprite());
+        mScene.attachChild(controlledCircle.getSprite());
 
         final AnalogOnScreenControl analogOnScreenControl = new AnalogOnScreenControl(
                 0,
@@ -116,7 +130,9 @@ public class MainActivity extends BaseGameActivity {
                 new AnalogOnScreenControl.IAnalogOnScreenControlListener() {
                     @Override
                     public void onControlChange(final BaseOnScreenControl pBaseOnScreenControl, final float pValueX, final float pValueY) {
-                        circle.getPhysicsHandler().setVelocity(pValueX * 10000 / circle.getWeight(), pValueY * 10000 / circle.getWeight());
+//                        circle.getPhysicsHandler().setVelocity(pValueX * 10000 / circle.getWeight(), pValueY * 10000 / circle.getWeight());
+                        controlledCircle.getPhysicsHandler().setVelocity(pValueX * 10000 / controlledCircle.getWeight(), pValueY * 10000 / controlledCircle.getWeight());
+
 //                physicsHandler.setAcceleration(pValueX * 100, pValueY * 100);
 
 //                        final Body faceBody = (Body) faces.getUserData();
@@ -137,7 +153,8 @@ public class MainActivity extends BaseGameActivity {
                     @Override
                     public void onControlClick(final AnalogOnScreenControl pAnalogOnScreenControl) {
 //                        circle.registerEntityModifier(new SequenceEntityModifier(new ScaleModifier(0.25f, 1, 1.5f), new ScaleModifier(0.25f, 1.5f, 1)));
-                        circle.scale(5);
+//                        circle.scale(5);
+//                        controlledCircle.scale(5);
 //                        circle.registerEntityModifier();
                     }
                 });
@@ -155,7 +172,54 @@ public class MainActivity extends BaseGameActivity {
 //        mScene.attachChild(analogOnScreenControl);
         mScene.setChildScene(analogOnScreenControl);
 
+        //point test
+
+        mScene.registerUpdateHandler(new IUpdateHandler() {
+            @Override
+            public void onUpdate(float pSecondsElapsed) {
+//                if ((circle.getSprite().getHeight() / 2 + point.getHeight() / 2) * (circle.getSprite().getHeight() / 2 + point.getHeight() / 2) >=
+//                        (circle.getSprite().getX() - point.getX()) * (circle.getSprite().getX() - point.getX()) +
+//                                (circle.getSprite().getY() - point.getY()) * (circle.getSprite().getY() - point.getY())
+//                        ) {
+//                    point.setColor(0, 0, 1);
+//                }else {
+//                    point.setColor(1, 0, 0);
+//                }
+
+
+//                if (checkIfcollides(circle.getSprite(), point)) point.setColor(0, 0, 1);
+//                else point.setColor(1, 0, 0);
+
+//                if (controlledCircle.collidedWithCircle(testPoint)) testPoint.getSprite().setColor(0, 0, 1);
+//                else testPoint.getSprite().setColor(1, 0, 0);
+                Circle testPoint;
+                for (int i = 0; i < points.size(); i++) {
+                    testPoint = points.get(i);
+//                    if (controlledCircle.collidedWithCircle(testPoint))
+//                        if (controlledCircle.ableToEat(testPoint))
+//                            testPoint.getSprite().setColor(0, 1, 0);
+//                        else testPoint.getSprite().setColor(0, 0, 1);
+//                    else testPoint.getSprite().setColor(1, 0, 0);
+                    if (controlledCircle.ableToEat(testPoint)) {
+                        mScene.detachChild(testPoint.getSprite());
+                        controlledCircle.scale(testPoint.getWeight());
+                        points.remove(i);
+                    }
+                }
+
+//                if (controlledCircle.collidedWithCircle(testPoint))
+//                    if (controlledCircle.ableToEat(testPoint)) testPoint.getSprite().setColor(0, 1, 0);
+//                    else testPoint.getSprite().setColor(0, 0, 1);
+//                else testPoint.getSprite().setColor(1, 0, 0);
+            }
+
+            @Override
+            public void reset() {
+            }
+        });
 
         pOnPopulateSceneCallback.onPopulateSceneFinished();
     }
+
+//    mContext.circle.getSprite().getHeight() / 2 * mContext.circle.getSprite().getScaleX()
 }

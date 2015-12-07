@@ -27,6 +27,10 @@ public class ResourceManager {
     public ITextureRegion mOnScreenControlKnobTextureRegion;
     public Font mFont;
 
+    //
+
+    public BitmapTextureAtlas pointTextureAtlas;
+    public ITextureRegion pointRegion;
 
     public ResourceManager(MainActivity context){
         this.mContext = context;
@@ -44,6 +48,11 @@ public class ResourceManager {
         this.mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mOnScreenControlTexture, mContext, "onscreen_control_base.png", 0, 0);
         this.mOnScreenControlKnobTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mOnScreenControlTexture, mContext, "onscreen_control_knob.png", 128, 0);
         this.mOnScreenControlTexture.load();
+
+        pointTextureAtlas = new BitmapTextureAtlas(mContext.getTextureManager(), 64, 64, TextureOptions.BILINEAR);
+        pointRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(pointTextureAtlas, mContext, "circle.png", 0, 0);
+        pointTextureAtlas.load();
+
 //        mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset()
 
         mFont = FontFactory.create(mContext.getFontManager(), mContext.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC), 32f / 1280 * mContext.WIDTH);

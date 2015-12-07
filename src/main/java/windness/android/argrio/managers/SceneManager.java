@@ -16,6 +16,8 @@ import windness.android.argrio.MainActivity;
  */
 public class SceneManager {
 
+    public Text text4;
+
     float WIDTH;
     float HEIGHT;
 
@@ -39,6 +41,11 @@ public class SceneManager {
 
     public Scene createScene(){
         mScene = new Scene();
+        Scene textScene = new Scene();
+        textScene.setBackgroundEnabled(false);
+        mScene.attachChild(textScene);
+        textScene.setZIndex(2);
+
         mScene.setBackground(new Background(0.2f, 0.7f, 0.8f));
         VertexBufferObjectManager vbo = mContext.getVertexBufferObjectManager();
 
@@ -60,14 +67,22 @@ public class SceneManager {
 //        SpeedX: XXXXXXXXXXXX
 //        SpeedY: XXXXXXXXXXXX
 
-        final Text text2 = new Text(0, 100, mContext.mResourceManager.mFont, "M:\n", "M: XXXXXXXXXXXXX".length(), mContext.getVertexBufferObjectManager());
+        final Text text2 = new Text(0, 90, mContext.mResourceManager.mFont, "M:\n", "M: XXXXXXXXXXXXX".length(), mContext.getVertexBufferObjectManager());
 
-        mScene.attachChild(text1);
-        mScene.attachChild(text2);
+        final Text text3 = new Text(0, 120, mContext.mResourceManager.mFont, "R1:", "R1: XXXXXXXXXXXXX".length(), mContext.getVertexBufferObjectManager());
+
+        final Text text5 = new Text(0, 150, mContext.mResourceManager.mFont, "points:", "points: XXXXXX".length(), mContext.getVertexBufferObjectManager());
+
+        text4 = new Text(0, 150, mContext.mResourceManager.mFont, "", "XXXXXXXXXXXXXXX".length(), mContext.getVertexBufferObjectManager());
+
+        textScene.attachChild(text1);
+        textScene.attachChild(text2);
+        textScene.attachChild(text3);
+        textScene.attachChild(text5);
 
         fpsCounter = mContext.fpsCounter;
 
-        mScene.registerUpdateHandler(new TimerHandler(0.05f, true, new ITimerCallback() {
+        textScene.registerUpdateHandler(new TimerHandler(0.05f, true, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 text1.setText("FPS: " + String.valueOf(fpsCounter.getFPS()) + "\n" +
@@ -82,7 +97,9 @@ public class SceneManager {
 //                                + "SppedY: " + (String.valueOf(physicsHandler.getVelocityY()))
                 );
 //                text2.setText("R: " + String.valueOf(Circle.mFaceTextureRegion.getHeight()) + " * " + String.valueOf(mContext.circle.getSprite().getScaleX()));
-                text2.setText("M: " + String.valueOf(mContext.circle.getWeight()));
+                text2.setText("M: " + String.valueOf(mContext.controlledCircle.getWeight()));
+                text3.setText("R1: " + String.valueOf(mContext.controlledCircle.getSprite().getHeight() / 2 * mContext.controlledCircle.getSprite().getScaleX()));
+                text5.setText("points: " + String.valueOf(mContext.points.size()));
             }
         }));
 

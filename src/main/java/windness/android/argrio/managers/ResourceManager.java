@@ -55,7 +55,7 @@ public class ResourceManager {
 
 //        mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset()
 
-        mFont = FontFactory.create(mContext.getFontManager(), mContext.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC), 32f / 1280 * mContext.WIDTH);
+        mFont = FontFactory.create(mContext.getFontManager(), mContext.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC), 32f / 1280 * mContext.getWIDTH());
         mFont.load();
     }
 }
